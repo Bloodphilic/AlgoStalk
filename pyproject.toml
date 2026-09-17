@@ -1,0 +1,18 @@
+[project]
+name = "algostalk"
+version = "0.1.0"
+description = "AlgoStalk time-series analysis and educational notebooks"
+readme = "README.md"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+    "ipykernel>=6.29",
+    "jupyterlab>=4.2",
+    "matplotlib>=3.9",
+    "nbformat>=5.10",
+    "numpy>=2.0",
+    "pandas>=2.2",
+    "statsmodels>=0.14",
+]
+
+[tool.uv]
+package = false
