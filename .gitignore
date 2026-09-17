@@ -1,0 +1,44 @@
+# Ignore everything by default.
+*
+!.gitignore
+
+# Let Git traverse directories so approved files can be included.
+!*/
+
+# Keep the project environment definition and approved source/document files.
+!pyproject.toml
+!uv.lock
+!*.pdf
+!*.md
+!*.py
+!*.ipynb
+
+# Do not include virtual environments, caches, or generated data/plots.
+.venv/
+**/.venv/
+__pycache__/
+**/__pycache__/
+
+# Keep image assets only in these two directories.
+!course/TimeSeries/VAR/images/**/*.png
+!course/TimeSeries/VAR/images/**/*.jpg
+!course/TimeSeries/VAR/images/**/*.jpeg
+!course/TimeSeries/VAR/images/**/*.webp
+!course/TimeSeries/VAR/images/**/*.gif
+!course/TimeSeries/VAR/images/**/*.svg
+!course/TimeSeries/VAR/images/**/*.tif
+!course/TimeSeries/VAR/images/**/*.tiff
+!course/TimeSeries/VAR/images/**/*.bmp
+!course/TimeSeries/VAR/images/**/*.heic
+!Media/mascot/**/*.png
+!Media/mascot/**/*.jpg
+!Media/mascot/**/*.jpeg
+!Media/mascot/**/*.webp
+!Media/mascot/**/*.gif
+!Media/mascot/**/*.svg
+!Media/mascot/**/*.tif
+!Media/mascot/**/*.tiff
+!Media/mascot/**/*.bmp
+!Media/mascot/**/*.heic
+
+# Audio, video, slides, and all other data formats stay ignored by the default rule.
