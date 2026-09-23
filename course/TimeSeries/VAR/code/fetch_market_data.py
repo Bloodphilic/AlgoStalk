@@ -26,12 +26,14 @@ TICKERS = {
 BASE_DIR = Path(__file__).resolve().parent
 OUTPUT_DIR = BASE_DIR / "data"
 OUTPUT_CSV = OUTPUT_DIR / "market_data_2y_daily.csv"
+END_DATE = datetime(2026, 3, 31, tzinfo=timezone.utc)
 
 
 def fetch_chart(ticker: str, start: datetime, end: datetime) -> list[dict]:
     """Fetch daily OHLCV observations for one Yahoo Finance ticker."""
     period1 = int(start.timestamp())
-    period2 = int(end.timestamp())
+    # Yahoo's period2 is exclusive, so include the requested end date.
+    period2 = int((end + timedelta(days=1)).timestamp())
     url = (
         f"https://query1.finance.yahoo.com/v8/finance/chart/{quote(ticker, safe='')}"
         f"?period1={period1}&period2={period2}&interval=1d&events=history"
@@ -69,8 +71,8 @@ def fetch_chart(ticker: str, start: datetime, end: datetime) -> list[dict]:
 
 
 def fetch_all(output_path: Path = OUTPUT_CSV) -> Path:
-    """Download two years of daily data and save a tidy CSV."""
-    end = datetime.now(timezone.utc)
+    """Download data up to 31 March 2026 and save a tidy CSV."""
+    end = END_DATE
     start = end - timedelta(days=5 * 365 + 1)
     all_rows: list[dict] = []
     for market, ticker in TICKERS.items():

@@ -28,7 +28,13 @@ def get_market_chart(
             values = values / first_value * 100
 
         line_label = label if label and len(y_columns) == 1 else column
-        ax.plot(df[x_column], values, label=line_label, color=color)
+        if isinstance(color, dict):
+            line_color = color.get(column)
+        elif isinstance(color, (list, tuple)):
+            line_color = color[y_columns.index(column)]
+        else:
+            line_color = color
+        ax.plot(df[x_column], values, label=line_label, color=line_color)
 
     if hide_ticks:
         ax.set_xticks([])
