@@ -123,3 +123,4 @@ def display_colored_table(df, column_colors, fontsize=12, figsize=(10, 2.2)):
     plt.tight_layout()
     display(fig)
     plt.close(fig)
+
