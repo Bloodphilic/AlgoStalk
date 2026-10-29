@@ -10,6 +10,7 @@ from sklearn.tree import DecisionTreeRegressor
 
 
 SEED = 20261023
+LEARNING_RATE = 0.05
 OUTPUT_DIR = Path(__file__).parent / "visuals"
 OUTPUT_DIR.mkdir(exist_ok=True)
 
@@ -61,7 +62,7 @@ def fit_predictions(X, frame):
         model = AdaBoostRegressor(
             estimator=DecisionTreeRegressor(max_depth=3, random_state=SEED),
             n_estimators=20,
-            learning_rate=0.05,
+            learning_rate=LEARNING_RATE,
             loss=loss,
             random_state=SEED,
         ).fit(X.iloc[:train_end], frame.traffic.iloc[:train_end])
@@ -97,7 +98,7 @@ def make_behaviour_chart(test):
         ax.set_ylabel("Hourly visits")
         ax.tick_params(axis="x", rotation=28)
     axes[0].annotate("Linear underpredicts a known,\nobservable campaign pattern", xy=(campaign_time, campaign_window.loc[campaign_window.rare_campaign, "traffic"].iloc[0]), xytext=(-150, -95), textcoords="offset points", fontsize=10, color="#991b1b", arrowprops={"arrowstyle": "->", "color": "#991b1b"})
-    axes[1].annotate("No feature explains this surge", xy=(attack_time + pd.Timedelta(hours=3), attack_window.traffic.max()), xytext=(-145, -100), textcoords="offset points", fontsize=10, color="#92400e", arrowprops={"arrowstyle": "->", "color": "#92400e"})
+    axes[1].annotate("No feature explains this surge", xy=(attack_time, attack_window.loc[attack_window.attack_like, "traffic"].iloc[0]), xytext=(-145, -100), textcoords="offset points", fontsize=10, color="#92400e", arrowprops={"arrowstyle": "->", "color": "#92400e"})
     handles, labels = axes[0].get_legend_handles_labels()
     fig.legend(handles, labels, loc="lower center", ncol=4, frameon=False, bbox_to_anchor=(0.5, -0.04))
     fig.suptitle("AdaBoost loss settings change which unusual events the model learns to expect", fontsize=17, fontweight="bold", y=1.03)
@@ -149,7 +150,7 @@ def make_loss_calculation_chart():
     axes[1].legend(frameon=False, loc="upper left")
     axes[1].annotate("Near-maximum errors are retained\nrelative to middle-sized errors", xy=(0.9, beta ** (1 - 0.9**2)), xytext=(0.30, 0.42), arrowprops={"arrowstyle": "->", "color": "#475569"}, fontsize=11)
     fig.suptitle("AdaBoostRegressor loss is a reweighting policy, not the final prediction metric", fontsize=17, fontweight="bold")
-    fig.text(0.5, -0.02, "Illustration uses beta = 0.25 and learning_rate = 1. In scikit-learn: multiplier = beta^((1 - L(e)) × learning_rate).", ha="center", fontsize=11, color="#334155")
+    fig.text(0.5, -0.02, f"Illustration uses beta = {beta:.2f} and learning_rate = {LEARNING_RATE}. In scikit-learn: multiplier = beta^((1 - L(e)) × learning_rate).", ha="center", fontsize=11, color="#334155")
     fig.savefig(OUTPUT_DIR / "adaboost_loss_reweighting.png", dpi=180, bbox_inches="tight", facecolor="white")
     plt.close(fig)
 
