@@ -55,7 +55,7 @@ for loss in ("linear", "square", "exponential"):
     elif loss == "square":
         transformed_loss = normalized_error**2
     else:
-        transformed_loss = 1.0 - np.exp(-(normalized_error**2))
+        transformed_loss = 1.0 - np.exp(-normalized_error)
     weighted_error = np.average(transformed_loss, weights=initial_weights)
     beta = weighted_error / (1.0 - weighted_error)
     multipliers = beta ** ((1.0 - transformed_loss) * LEARNING_RATE)

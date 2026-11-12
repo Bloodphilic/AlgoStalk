@@ -83,10 +83,10 @@ def make_behaviour_chart(test):
     ]
 
     plt.style.use("seaborn-v0_8-whitegrid")
-    fig, axes = plt.subplots(1, 2, figsize=(16, 7), constrained_layout=True)
+    fig, axes = plt.subplots(1, 2, figsize=(16, 7), constrained_layout=True, sharey=True)
     panels = [
-        (axes[0], campaign_window, "Known campaign lift: default creates a false alert", "rare_campaign"),
-        (axes[1], attack_window, "Unexplained surge: both models leave a large residual", "attack_like"),
+        (axes[0], campaign_window, "Known spike: the feature-defined campaign lift", "rare_campaign"),
+        (axes[1], attack_window, "Unknown spike: no feature explains the lift", "attack_like"),
     ]
     for ax, window, title, event_col in panels:
         ax.plot(window.timestamp, window.traffic, color="#172554", linewidth=2.8, label="Observed traffic")
@@ -97,33 +97,33 @@ def make_behaviour_chart(test):
         ax.set_title(title, fontweight="bold", loc="left", fontsize=13)
         ax.set_ylabel("Hourly visits")
         ax.tick_params(axis="x", rotation=28)
-    axes[0].annotate("Linear underpredicts a known,\nobservable campaign pattern", xy=(campaign_time, campaign_window.loc[campaign_window.rare_campaign, "traffic"].iloc[0]), xytext=(-150, -95), textcoords="offset points", fontsize=10, color="#991b1b", arrowprops={"arrowstyle": "->", "color": "#991b1b"})
-    axes[1].annotate("No feature explains this surge", xy=(attack_time, attack_window.loc[attack_window.attack_like, "traffic"].iloc[0]), xytext=(-145, -100), textcoords="offset points", fontsize=10, color="#92400e", arrowprops={"arrowstyle": "->", "color": "#92400e"})
+    axes[0].annotate("Linear underpredicts the known,\nobservable campaign pattern", xy=(campaign_time, campaign_window.loc[campaign_window.rare_campaign, "traffic"].iloc[0]), xytext=(-150, -95), textcoords="offset points", fontsize=10, color="#991b1b", arrowprops={"arrowstyle": "->", "color": "#991b1b"})
+    axes[1].annotate("Both models leave this\nunknown spike unexplained", xy=(attack_time, attack_window.loc[attack_window.attack_like, "traffic"].iloc[0]), xytext=(-145, -100), textcoords="offset points", fontsize=10, color="#92400e", arrowprops={"arrowstyle": "->", "color": "#92400e"})
     handles, labels = axes[0].get_legend_handles_labels()
     fig.legend(handles, labels, loc="lower center", ncol=4, frameon=False, bbox_to_anchor=(0.5, -0.04))
-    fig.suptitle("AdaBoost loss settings change which unusual events the model learns to expect", fontsize=17, fontweight="bold", y=1.03)
+    fig.suptitle("Known versus unknown spikes: similar observations, different explanations", fontsize=17, fontweight="bold", y=1.03)
     fig.savefig(OUTPUT_DIR / "adaboost_known_vs_unexplained.png", dpi=180, bbox_inches="tight", facecolor="white")
     plt.close(fig)
 
 
 def make_judgement_chart():
-    fig, ax = plt.subplots(figsize=(14, 8))
+    fig, ax = plt.subplots(figsize=(14, 6.6))
     ax.set_axis_off()
     boxes = [
-        (0.06, 0.61, "Prompt an AI to run AdaBoost", "A model and an aggregate score appear."),
-        (0.37, 0.61, "Aggregate MAE looks acceptable", "Default linear loss: ordinary MAE = 59.52"),
-        (0.68, 0.61, "Slice errors by operational scenario", "Rare known campaign MAE = 700.65"),
-        (0.20, 0.17, "Inspect the error policy", "Square loss prioritises the extreme-error tail."),
-        (0.55, 0.17, "Validate the decision", "Known campaign: no false alarm.\nUnexplained surge: review signal remains."),
+        (0.06, 0.58, "Prompt an AI to run AdaBoost", "A model and an aggregate score appear."),
+        (0.37, 0.58, "Aggregate MAE looks acceptable", "Default linear loss: ordinary MAE = 59.52"),
+        (0.68, 0.58, "Slice errors by operational scenario", "Rare known campaign MAE = 700.65"),
+        (0.20, 0.19, "Inspect the error policy", "Square loss prioritises the extreme-error tail."),
+        (0.55, 0.19, "Validate the decision", "Known campaign: no false alarm.\nUnexplained surge: review signal remains."),
     ]
     colors = ["#dbeafe", "#e0f2fe", "#fee2e2", "#fef3c7", "#dcfce7"]
     for (x, y, headline, detail), color in zip(boxes, colors):
         ax.text(x, y, headline + "\n\n" + detail, transform=ax.transAxes, ha="left", va="center", fontsize=10.5, linespacing=1.45, bbox={"boxstyle": "round,pad=0.75", "facecolor": color, "edgecolor": "#334155", "linewidth": 1.5})
-    arrows = [((0.28, 0.61), (0.36, 0.61)), ((0.59, 0.61), (0.67, 0.61)), ((0.72, 0.49), (0.55, 0.29)), ((0.43, 0.17), (0.54, 0.17))]
+    arrows = [((0.28, 0.58), (0.36, 0.58)), ((0.59, 0.58), (0.67, 0.58)), ((0.72, 0.47), (0.55, 0.30)), ((0.43, 0.19), (0.54, 0.19))]
     for start, end in arrows:
         ax.annotate("", xy=end, xytext=start, xycoords=ax.transAxes, arrowprops={"arrowstyle": "->", "lw": 2.2, "color": "#475569"})
-    fig.suptitle("Running the model is not the same as understanding its behaviour", fontsize=20, fontweight="bold", color="#0f172a", y=0.98)
-    fig.text(0.5, 0.88, "The model is not a black box once you inspect assumptions, defaults and error slices.", ha="center", fontsize=13, color="#334155")
+    fig.suptitle("Running the model is not the same as understanding its behaviour", fontsize=20, fontweight="bold", color="#0f172a", y=0.97)
+    fig.text(0.5, 0.84, "The model is not a black box once you inspect assumptions, defaults and error slices.", ha="center", fontsize=13, color="#334155")
     fig.savefig(OUTPUT_DIR / "ai_prompt_vs_model_judgement.png", dpi=180, bbox_inches="tight", facecolor="white")
     plt.close(fig)
 

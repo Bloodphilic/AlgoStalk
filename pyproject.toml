@@ -11,7 +11,9 @@ dependencies = [
     "nbformat>=5.10",
     "numpy>=2.0",
     "pandas>=2.2",
+    "scikit-learn>=1.6",
     "statsmodels>=0.14",
+    "xgboost>=2.1",
 ]
 
 [tool.uv]
